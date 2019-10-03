@@ -1,0 +1,268 @@
+<h1>C programnyelv alapjai Arduinohoz</h1>
+<h4>Piarista Gimnázium, robotika szakkör</h4>
+<h2>1. Arduino kód felépítése, általános szabályok</h2>
+<ul>
+<li>A kód föntről lefelé fut le, a legfontosabb blokkok (függvények, ciklusok, stb.) kapcsos zárójelek közé íródnak.</li>
+<li>A két legfontosabb függvény a <code>void setup()</code> és a <code>void loop()</code>, ezek minden arduino kódban megtalálhatóak.</li>
+<li>Először a kontroller a <code>void setup()</code> függvény fut le, egyszer.</li>
+<li>Ezután a <code>void loop()</code> fut újra és újra, mindaddig, amíg az Arduino működik. Ha a programkód végére ér, elölről kezdi.</li>
+</ul>
+<blockquote>
+<p><em>Az alábbi kód másodpercenként „köszön&quot;:</em></p>
+</blockquote>
+<pre><code class="language-c">void setup()
+{
+    //az itt lévő kód egyszer fut le, az induláskor
+    Serial.begin(9600);
+}
+
+void loop()
+{
+    //az itt lévő kód újra és újra lefut, amíg valaki mást nem mond
+    Serial.println(&quot;hello&quot;);
+    delay(1000);
+}
+</code></pre>
+<ul>
+<li><strong>Fontos!</strong> A C programnyelvben a parancsot tartalmazó sorok végére pontosvesszőt (;) teszünk.</li>
+<li>Különbség van a kis- és nagybetűk között, így pl. Janos és janos két különböző dolog.</li>
+<li>Ne használjunk ékezetes betűket.</li>
+<li>Megjegyzéseket a sorok végére <code>//Megjegyzés</code>, vagy több soron át <code>/* Megjegyzés */</code> formában tehetünk.</li>
+</ul>
+<hr />
+<h2>2. Változók</h2>
+<ul>
+<li>Változókat használunk a program lefutása során használt értékek, szövegek, stb. tárolására és a velük való számolásra.</li>
+<li>Típusuk alapján sok féle változót elkülönítünk, itt csak a legegyszerűbbek vannak felsorolva.</li>
+</ul>
+<h3>a) Karakterváltozó (<code>char</code>)</h3>
+<ul>
+<li>Egy nyolc biten tárolt szám, tehát 255 féle értéket vehet fel.</li>
+<li>Minden értékéhez tartozik egy egy karakter/írásjel is, az ASCII-tábla alapján. <em>(Ha érdekel, Google a barátod...)</em></li>
+<li>Normál esetben elójeles, de megadható <code>unsigned char</code> alakban, ekkor csak pozitív értéket vehet fel.</li>
+</ul>
+<h3>b) Egész szám (<code>int</code>)</h3>
+<ul>
+<li>Az Arduinon 16 bites szám, így értéke -32.768 és 32.767 között változhat, de törtrészt nem tartalmazhat.</li>
+<li>Ennek is van előjel nélküli csak pozitív alakja, az <code>unsigned int</code></li>
+<li>Ha nagyobb értékre van szükségünk, <code>long</code> típusú változót kell használnunk, ez 32 biten van tárolva, így értéke -2.147.483.648 és 2.147.483.647 között mozoghat.</li>
+<li>A <code>long</code> előjel nélküli változata az <code>unsigned long</code>.</li>
+</ul>
+<h3>c) Szöveg (<code>String</code>)</h3>
+<ul>
+<li>Ha nem csak egy karaktert, hanem azok egy sorát kell tárolni, <code>String</code> változó használunk.</li>
+<li><strong>Vigyázz!</strong> Nagy S.</li>
+<li>Értékét annak megadásakor &quot;idézőjelbe&quot; tesszük.</li>
+</ul>
+<h3>d) Általános tudnivalók</h3>
+<blockquote>
+<p><em>Itt egy példa a fent leírt változókra:</em></p>
+</blockquote>
+<pre><code class="language-c">int i; //Megadhatok egy változót érték nélkül, későbbi használatra
+int j = 20; //Vagy adhatok neki rögtön értéket
+
+void setup()
+{
+    Serial.begin(9600);
+    i = 5; //Adok egy értéket a változónak
+}
+
+void loop()
+{
+   String nev = &quot;Elek&quot;; //Függvényen belül is megadható változó
+   Serial.println(nev); //A soros monitorra kiírja a nev változóban tárolt értéket
+   int k = i + j; //korábbi változók értékei is felhasználhatóak
+   Serial.println(k); //A soros monitorra kiírja i+j=k értékét, azaz 25-öt
+}
+</code></pre>
+<ul>
+<li>A fenti példában <code>i</code> és <code>j</code> globális változók, a függvényeken kívül vannak megadva, így minden függvény által elérhetőek.</li>
+<li>A <code>nev</code> egy lokális változó, a függvényen belül lett megadva, így csak ott elérhető. <em>(Így például a <code>void setup()</code>-ban nem használható.)</em></li>
+<li><strong>Fontos!</strong> Mielőtt műveleteket végeznénk egy váltzóval, értéket kell neki adni:
+<ul>
+<li>Ezt lehet rogön a változó megadásakor: <code>int i = 1;</code> (<em>deklarálás</em>)</li>
+<li>vagy később: <code>int i;</code> (<em>definiálás</em>) majd később <code>i = 1;</code></li>
+<li><strong>Fontos!</strong> Változónak értéket adni 1 db egyenlőségjellel lehet, a következő alakban: <code>valtozo = ertek;</code></li>
+</ul>
+</li>
+<li>Bizonyos neveket nem adhatunk a változóknak, például nincs <code>int int;</code></li>
+<li>A lokális változók az őket tartalmazó fügvény lefutása után elvesztik értéküket.</li>
+<li>Egyszerre több változó is megadható, vesszővel elválasztva: <code>int a, b = 6;</code></li>
+<li><strong>Fontos!</strong> Ha csak egyszer kell egy számot használnom, nem kell rá változót bevezetnem, az is helyes, hogy <code>k = 20 + 5;</code></li>
+</ul>
+<hr />
+<h2>3. Függvények</h2>
+<ul>
+<li>Egy-egy sokszor elvégzendő műveletsort egyszerűsítenek le.</li>
+<li>Például, ha sokszor kellene egy adott műveletsort elvégeznem két számon és kiírnom a végeredményt, nem érdemes ezt mindenüvé beírni a kódban, hiszen később sokkal nehezebb kijavítani egy esetleges hibát 10 helyen... Ehelyett készítek egy függvényt, amit csak meg kell hívnom, hogy elvégezze a műveletsort.</li>
+</ul>
+<blockquote>
+<p><em>Függvény deklarálása:</em></p>
+</blockquote>
+<pre><code class="language-c">void szia(void)
+{
+    Serial.println(&quot;hello&quot;);
+}
+</code></pre>
+<ul>
+<li>Minden függvénynek van egy neve, egy visszatérítési értéke és bemeneti változói.
+<ul>
+<li>Amikor megadunk egy függvényt, először a visszatérített érték típusát adjuk meg: ez lehet <code>int</code>, <code>String</code>, vagy ha nem akarunk semmilyen értéket visszatéríteni, <code>void</code>.</li>
+<li>Ezután megadjuk a függvény nevét, ez a fenti példában <code>szia</code>.</li>
+<li>Végül zárójelben megadjuk a bemeneti változókat <code>(típus név)</code> alakban: ezek olyan változók, amelyeket a függvény meghívásakor adunk meg.</li>
+<li><strong>Vigyázz!</strong> Ennek a sornak a végén nincs pontosvessző!</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><em>Az alábbi függvény összead két számot, majd visszatéríti az összeget:</em></p>
+</blockquote>
+<pre><code class="language-c">int osszeg(int a, int b) //oszeg nevű, egész számot visszatérítő és két egész számot bekérő függvény
+{
+    int sum = a + b; //sum nevű változó egyenlővé tevése a két bemeneti változóval
+    return sum; //sum értékének visszatérítése
+}
+</code></pre>
+<ul>
+<li>Ha több bemeneti változót szeretnénk, vesszővel válasszuk el őket.</li>
+<li>Egy érték visszatérítéséhez a <code>return érték;</code> parancsot kell használni.</li>
+</ul>
+<blockquote>
+<p><em>Függvény meghívása</em>:</p>
+</blockquote>
+<pre><code class="language-c">void setup()
+{
+Serial.begin(9600);
+}
+
+void loop()
+{
+    int i = osszeg(5, 6); //Bevezetek egy változót és egyenlővé teszem 5 és 6 összegével
+    Serial.println(i); //i értékének kiírása a soros monitorra
+    delay(1000);
+}
+
+int osszeg(int a, int b) //A korábbi függvény
+{
+    int sum = a + b;
+    return sum;
+}
+</code></pre>
+<ul>
+<li>A példában is látszik, hogy a függvény meghívása <code>függvény neve(bemeneti változó 1, bemeneti változó 2, stb);</code> alakban történik.</li>
+<li><strong>Fontos!</strong> A bemeneti változók megfelelő típusúak legyenek!</li>
+</ul>
+<hr />
+<h2>4. Operátorok</h2>
+<h3>a) Matematikai műveletek</h3>
+<ul>
+<li>Összeadás, kivonás, szorzás, osztás: például <code>a + b</code> , <code>4 - 2</code> , <code>5 * x</code> és <code>i / 6</code> .</li>
+<li>Egy egy változóval akarunk elvégezni egy műveletet, pl: <code>a = a + 2;</code>, használható az <code>a += 2</code> kivejezés is. (Ugyanígy létezik <code>-=</code> , <code>*=</code> és <code>/=</code> operátor.)</li>
+<li>Praktikus rövidítés még az <code>a++;</code> , illetve az <code>a--</code> -  ezek 1-gyel növelik, illetve csökkentik a változó értékét.</li>
+</ul>
+<h3>b) számok értékének összehasonlítása</h3>
+<ul>
+<li>Ha azt kell megvizsgálni, két szám egyenlő-e, az <code>a == b;</code> operátort használjuk.</li>
+<li>Ha egynlőtlenséget vizsgáluk, az <code>a != b</code> operátort használjuk.</li>
+<li>Egyenlőtlenségek esetén a <code>a &lt; b</code> , <code>x &lt;= y</code> , <code>k &gt; 100</code> és <code>var &gt;= 5</code> alakú operátorokat használjuk.</li>
+</ul>
+<h3>c) if - else if - else</h3>
+<ul>
+<li>Ha egy állításról el kell dönteni, hogy igaz-e az <code>if</code> (magyarul: „ha&quot;) állítást használjuk</li>
+<li>Az if szócska után zárójelbe írjuk a vizsgálandó állítást: <code>if(állítás) { ... }</code> majd a függvényekhez hasonlóan kapcsos zárójelek közé írjuk a kódot, ami akkor fut le, ha az állítás igaz.</li>
+<li><strong>Vigyázz!</strong> Az if utáni sorban nincs pontosvessző!</li>
+</ul>
+<blockquote>
+<p><em>Példa egy if álításra:</em></p>
+</blockquote>
+<pre><code class="language-c">void setup()
+{
+    int ser = 1; //ser változó értéke legyen 1
+    if (ser == 1) //Ha ser értéke 1, fusson le a kapcsos zárójelek közötti kód
+    {
+        Serial.begin(9600);
+    }
+}
+</code></pre>
+<ul>
+<li>
+<p>A fenti program elindítja a soros kommunikációt, ha ser változó értéke egyenlő 1-gyel.</p>
+</li>
+<li>
+<p>Egy <code>if</code> állítás lezárása után opcionálisan elelyezhetünk tetszőleges számú <code>if else</code> állítást is, hasonló alakban.</p>
+</li>
+<li>
+<p>Ezeket fentről lefelé haladva értékeli ki a program, és amelyik igaz, azt lefuttatja.</p>
+</li>
+<li>
+<p>Az <code>if</code> és <code>if else</code> állítások után elhelyezhető egy <code>else</code> állítás is, ami akkor fut le, ha az előtte lévők közül egyik sem volt igaz.</p>
+</li>
+</ul>
+<blockquote>
+<p><em>Az alábbi kód x értékétől függően végez el feladatokat:</em></p>
+</blockquote>
+<pre><code class="language-c">if(x == 0)
+{
+    //Az ide írt kód akkor fut le, ha x értéke 0
+}
+else if(x == 1)
+{
+    //Ez a kód pedig akkor fut le, ha x értéke 1
+}
+else
+{
+    //Ha x sem 0, sem 1, ez a kód fog lefutni
+}
+</code></pre>
+<hr />
+<h2>5. Ciklusok</h2>
+<ul>
+<li>Ha valamilyen műveletsort egymás után többször el kell végeznünk, ciklusokat használunk.</li>
+</ul>
+<h3>a) <code>for</code> ciklus</h3>
+<ul>
+<li>Eleinte vesz egy változót adott értéken, megnézi, megfelel-e egy megadott feltételnek, majd lefuttatja a ciklusban található kódot és megváltoztatja az eredeti változót. Ezt újra és újra megteszi, amígy a megadott feltétel teljesül.</li>
+<li>Használata: <code>for(változó = érték; feltétel; mit csináljon a változóval) {}</code></li>
+</ul>
+<blockquote>
+<p><em>Leggyakoribb alkalmazása:</em></p>
+</blockquote>
+<pre><code class="language-c">void setup()
+{
+    int i;
+    for(i = 1; i &lt; 10; i++)
+    {
+        Serial.println(&quot;i kisebb, mint 10&quot;);
+    }
+}
+</code></pre>
+<ul>
+<li>A fenti kód 9-szer írja ki a soros monitorra a megadott szövegét. Kezdetben vesz egy i változót, melynek az 1-es értéket adja, majd megnézi, i kisebb-e, mint 10. Ha igen, lefuttatja a kapcsos zárójelekbe írt kódot, megnöveli i-t 1-gyel, majd kezdi elölről.</li>
+<li><strong>Figyelem!</strong> A <code>for</code> utáni zárójelen belül pontosvessző vannak, de a sor végén nincs semmi.</li>
+</ul>
+<h3>b) <code>while</code> ciklus</h3>
+<ul>
+<li>Hasonló a <code>for</code> ciklushoz, akkor használjuk, ha nem megadott számú alkalommal kell lefuttatni egy kódot, hanem addig, amíg valamilyen feltétel teljesül.</li>
+<li>A <code>while</code> utáni zárójelben csak egy feltétel szerepel: <code>while(feltétel)</code> .</li>
+</ul>
+<blockquote>
+<p><em>Például ez a kód addig újra és újra lefut, amíg a <code>millis()</code> függvény visszatérítési értéke kisebb 3000-nél:</em></p>
+</blockquote>
+<pre><code class="language-c">void setup()
+{
+    int ido = millis();
+    while(ido &lt; 3000)
+    {
+        ido = millis();
+    }
+}
+</code></pre>
+<hr />
+<h2>6. Tömbök</h2>
+<ul>
+<li>Akkor használunk tömböket, ha egy bizonyos típusú változóból többet akarunk tárolni randezett alakban.</li>
+<li>Egy tömb olyan, mint egy polc, melyen számozott helyek vannak és minden helyre elhelyezhető egy változó.</li>
+<li>Tömböket a változókhoz hasonlóan adhatunk meg, ugyanúgy lehetnek globálisak és lokálisak.</li>
+<li>Először a tömbben tárolt változók típusát, majd a tömb nevét és elemeinek számát szögletes zárójelben, végül pedig magukat az elemeket adjuk meg: <code>int szamok[5] = {2, 4, 3, 0, 4};</code></li>
+<li></li>
+</ul>
